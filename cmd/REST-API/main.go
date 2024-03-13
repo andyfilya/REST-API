@@ -1,9 +1,19 @@
 package main
 
 import (
-	"fmt"
+  "log"
+  "fmt"
+
+	"github.com/andyfilya/restapi/config"
+  "github.com/andyfilya/restapi/internal/server"
 )
 
 func main() {
-	fmt.Println("hello world!")
+  cfg, err := config.InitGlobalConfig()
+  if err != nil {
+    log.Fatal(err)
+  }
+  server := server.InitServer(&cfg.ServCfg)
+  fmt.Println(server)
+  server.Init()
 }

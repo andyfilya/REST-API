@@ -19,8 +19,8 @@ func (as *ActorService) CreateActor(actor restapi.Actor) (int, error) {
 	return as.repo.CreateActor(actor)
 }
 
-func (as *ActorService) DeleteActor(actorId int) error {
-	return as.repo.DeleteActor(actorId)
+func (as *ActorService) DeleteActor(actor restapi.Actor) error {
+	return as.repo.DeleteActor(actor)
 }
 
 func (as *ActorService) ChangeActor(actorId int, toChange string) error {

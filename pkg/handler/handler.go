@@ -25,6 +25,6 @@ func (hr *Handler) StartRoute() http.Handler {
 	// ENDPOINTS WITH AUTH (AFTER AUTH ... WITH JWT TOKEN //
 	mux.HandleFunc("/auth/check", hr.middlewareAuth(hr.checkMiddlewareHealth)) // only for check health of middleware
 	mux.HandleFunc("/api/create/actor", hr.middlewareAuth(hr.createActor))     // create actor
-
+	mux.HandleFunc("/api/delete/actor", hr.middlewareAuth(hr.deleteActor))     // delete actor
 	return mux
 }

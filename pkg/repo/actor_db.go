@@ -33,7 +33,13 @@ func (adb *ActorDataBase) CreateActor(actor restapi.Actor) (int, error) {
 	return actorId, nil
 }
 
-func (adb *ActorDataBase) DeleteActor(actorId int) error {
+func (adb *ActorDataBase) DeleteActor(actor restapi.Actor) error {
+	query := fmt.Sprintf("DELETE FROM %s WHERE actor_name=$1 AND actor_surname=$2", actorTbl)
+	_, err := adb.db.Exec(query, actor.FirstName, actor.LastName)
+	if err != nil {
+		logrus.Errorf("error while exec actor table : [%v]", err)
+		return err
+	}
 	return nil
 }
 

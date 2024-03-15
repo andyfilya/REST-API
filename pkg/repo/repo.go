@@ -12,7 +12,7 @@ type Authorization interface {
 
 type Actor interface {
 	CreateActor(actor restapi.Actor) (int, error)
-	DeleteActor(actorId int) error
+	DeleteActor(actor restapi.Actor) error
 	ChangeActor(actorId int, toChange string) error
 	FindActorFilm(actor string) ([]restapi.Film, error)
 }

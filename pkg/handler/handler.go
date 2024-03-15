@@ -18,8 +18,10 @@ func InitNewHandler(services *service.Service) *Handler {
 func (hr *Handler) StartRoute() http.Handler {
 	mux := http.NewServeMux()
 	// REGISTER (BEFORE AUTH) //
+
 	mux.HandleFunc("/auth/register", hr.registerNewUser)
 	mux.HandleFunc("/auth/signin", hr.signinUser)
+	mux.HandleFunc("/auth/check", hr.middlewareAuth(hr.checkMiddleware))
 
 	return mux
 }

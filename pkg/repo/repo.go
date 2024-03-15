@@ -33,5 +33,6 @@ type Repository struct {
 func InitNewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
 		Authorization: InitAuthDataBase(db),
+		Actor:         InitActorDataBase(db),
 	}
 }

@@ -34,5 +34,6 @@ type Service struct {
 func InitNewService(repo *repo.Repository) *Service {
 	return &Service{
 		Authorization: InitAuthService(repo.Authorization),
+		Actor:         InitActorService(repo.Actor),
 	}
 }

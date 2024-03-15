@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func (hr *Handler) checkMiddleware(w http.ResponseWriter, r *http.Request) {
+func (hr *Handler) checkMiddlewareHealth(w http.ResponseWriter, r *http.Request) {
 	logrus.Info("in check middleware")
 	w.Write([]byte("check middleware for auth users."))
 }

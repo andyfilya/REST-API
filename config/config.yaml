@@ -1,3 +1,10 @@
 server:
   host: "localhost"
   port: "8081"
+database:
+  host: "localhost"
+  port: "5432"
+  user: "root"
+  password: "123"
+  dbname: "users_inf"
+  sslmode: "disable"

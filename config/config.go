@@ -1,40 +1,51 @@
 package config
 
 import (
+	"errors"
+	"github.com/sirupsen/logrus"
 	"os"
-  "errors"
 
 	"gopkg.in/yaml.v2"
 )
 
 const (
-  configDirectory = "./config"
-  configYaml = "config.yaml"
+	configYaml = "../../config/config.yaml"
 )
 
-
 type ServerConfig struct {
-  Host string `yaml:"host"`
-  Port string `yaml:"port"`
+	Host string `yaml:"host"`
+	Port string `yaml:"port"`
+}
+
+type UserDatabaseConfig struct {
+	DatabaseName string `yaml:"dbname"`
+	Host         string `yaml:"host"`
+	Port         string `yaml:"port"`
+	Username     string `yaml:"user"`
+	Password     string `yaml:"password"`
+	SSLmode      string `yaml:"sslmode"`
 }
 
 type GlobalConfig struct {
-  ServCfg ServerConfig `yaml:"server"` 
+	ServCfg         ServerConfig       `yaml:"server"`
+	UserDatabaseCfg UserDatabaseConfig `yaml:"database"`
 }
 
 func InitGlobalConfig() (*GlobalConfig, error) {
-  gc := &GlobalConfig{}
+	gc := &GlobalConfig{}
 
-  bytes, err := os.ReadFile(configDirectory+"/"+configYaml)
-  
-  if err != nil {
-    return nil, errors.New("error while reading directory")
-  }
+	bytes, err := os.ReadFile(configYaml)
 
-  err = yaml.Unmarshal(bytes, &gc)
-  if err != nil {
-    return nil, errors.New("error while unmarshal yaml file")
-  }
+	if err != nil {
+		logrus.Errorf("error reading directory : [%v]", err)
+		return nil, errors.New("error while reading directory")
+	}
 
-  return gc, nil
+	err = yaml.Unmarshal(bytes, &gc)
+	if err != nil {
+		logrus.Errorf("error unmarshal yaml config : [%v]", err)
+		return nil, errors.New("error while unmarshal yaml file")
+	}
+
+	return gc, nil
 }

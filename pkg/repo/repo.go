@@ -20,7 +20,7 @@ type Actor interface {
 type Film interface {
 	CreateFilm(film restapi.Film) (int, error)
 	DeleteFilm(film restapi.Film) error
-	ChangeFilm(filmId int, toChange string) error
+	ChangeFilm(newFilm restapi.Film, oldFilm restapi.Film) error
 	ActorsFilm(filmid int) ([]restapi.Actor, error)
 }
 

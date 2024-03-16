@@ -31,6 +31,7 @@ func (fdb *FilmDataBase) CreateFilm(film restapi.Film) (int, error) {
 		logrus.Errorf("error while scan film id in var : [%v]", err)
 		return -1, err
 	}
+
 	return filmId, nil
 }
 
@@ -44,7 +45,13 @@ func (fdb *FilmDataBase) DeleteFilm(film restapi.Film) error {
 	return nil
 }
 
-func (fdb *FilmDataBase) ChangeFilm(filmId int, toChange string) error {
+func (fdb *FilmDataBase) ChangeFilm(newFilm restapi.Film, oldFilm restapi.Film) error {
+	query := fmt.Sprintf("UPDATE %s SET film_title=$1, film_description=$2, film_date=$3, film_rate=$4 WHERE film_title=$5", filmTbl)
+	_, err := fdb.db.Exec(query, newFilm.Title, newFilm.Description, newFilm.Date, newFilm.Rate, oldFilm.Title)
+	if err != nil {
+		logrus.Errorf("error while exec update film table : [%v]", err)
+		return err
+	}
 	return nil
 }
 

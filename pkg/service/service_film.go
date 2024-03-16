@@ -34,8 +34,9 @@ func (fs *FilmService) DeleteFilm(film restapi.Film) error {
 	return fs.repo.DeleteFilm(film)
 }
 
-func (fs *FilmService) ChangeFilm(filmId int, toChange string) error {
-	return nil
+func (fs *FilmService) ChangeFilm(newFilm restapi.Film, oldFilm restapi.Film) error {
+	oldFilm, newFilm = checkEmptyFilm(newFilm, oldFilm)
+	return fs.repo.ChangeFilm(newFilm, oldFilm)
 }
 
 func (fs *FilmService) ActorsFilm(filmId int) ([]restapi.Actor, error) {

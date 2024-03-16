@@ -8,3 +8,11 @@ type Film struct {
 	Rate        string `json:"rate" binding:"required"`
 	Actors      []Actor
 }
+
+type ToChangeFilm struct {
+	Film
+	ToChangeTitle       string `json:"to_change_title"`
+	ToChangeDate        string `json:"to_change_date"`
+	ToChangeDescription string `json:"to_change_description""`
+	ToChangeRate        string `json:"to_change_rate"`
+}

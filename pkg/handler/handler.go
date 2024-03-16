@@ -48,5 +48,7 @@ func (hr *Handler) StartRoute() http.Handler {
 
 	mux.HandleFunc("/api/create/film", hr.middlewareAuth(hr.createFilm)) // create film
 	mux.HandleFunc("/api/delete/film", hr.middlewareAuth(hr.deleteFilm)) // delete film
+	mux.HandleFunc("/api/update/film", hr.middlewareAuth(hr.changeFilm)) // change film
+
 	return mux
 }

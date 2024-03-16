@@ -19,8 +19,8 @@ type Actor interface {
 
 type Film interface {
 	CreateFilm(film restapi.Film) (int, error)
-	DeleteFilm(filmId int) error
-	ChanageFilm(filmId int, toChange string) error
+	DeleteFilm(film restapi.Film) error
+	ChangeFilm(filmId int, toChange string) error
 	ActorsFilm(filmid int) ([]restapi.Actor, error)
 }
 
@@ -34,5 +34,6 @@ func InitNewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
 		Authorization: InitAuthDataBase(db),
 		Actor:         InitActorDataBase(db),
+		Film:          InitFilmDataBase(db),
 	}
 }

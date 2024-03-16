@@ -31,16 +31,22 @@ func InitNewHandler(services *service.Service) *Handler {
 func (hr *Handler) StartRoute() http.Handler {
 	hr.logger.Infof("starting route")
 	mux := http.NewServeMux()
+
 	// REGISTER (BEFORE AUTH) //
 
 	mux.HandleFunc("/auth/register", hr.registerNewUser)
 	mux.HandleFunc("/auth/signin", hr.signinUser)
 
-	// ENDPOINTS WITH AUTH (AFTER AUTH ... WITH JWT TOKEN) //
+	// ENDPOINTS WITH AUTH (AFTER AUTH ... WITH JWT TOKEN) ACTORS //
+
 	mux.HandleFunc("/auth/check", hr.middlewareAuth(hr.checkMiddlewareHealth)) // check health (middleware)
 	mux.HandleFunc("/api/create/actor", hr.middlewareAuth(hr.createActor))     // create actor
 	mux.HandleFunc("/api/delete/actor", hr.middlewareAuth(hr.deleteActor))     // delete actor
 	mux.HandleFunc("/api/update/actor", hr.middlewareAuth(hr.updateActor))     // update actor
 
+	// ENDPOINTS WITH AUTH (AFTER AUTH ... WITH JWT TOKEN) FILMS //
+
+	mux.HandleFunc("/api/create/film", hr.middlewareAuth(hr.createFilm)) // create film
+	mux.HandleFunc("/api/delete/film", hr.middlewareAuth(hr.deleteFilm)) // delete film
 	return mux
 }

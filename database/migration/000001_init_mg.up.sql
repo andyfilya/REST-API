@@ -11,3 +11,11 @@ CREATE TABLE actors (
   actor_surname varchar(255) not null,
   actor_birth_date date
 );
+
+CREATE TABLE films (
+  film_id serial not null unique,
+  film_title varchar(150) not null,
+  film_description varchar(1000) not null,
+  film_date date,
+  film_rate real
+);

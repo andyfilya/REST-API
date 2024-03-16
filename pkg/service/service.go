@@ -20,8 +20,8 @@ type Actor interface {
 
 type Film interface {
 	CreateFilm(film restapi.Film) (int, error)
-	DeleteFilm(filmId int) error
-	ChanageFilm(filmId int, toChange string) error
+	DeleteFilm(film restapi.Film) error
+	ChangeFilm(filmId int, toChange string) error
 	ActorsFilm(filmid int) ([]restapi.Actor, error)
 }
 
@@ -35,5 +35,6 @@ func InitNewService(repo *repo.Repository) *Service {
 	return &Service{
 		Authorization: InitAuthService(repo.Authorization),
 		Actor:         InitActorService(repo.Actor),
+		Film:          InitFilmService(repo.Film),
 	}
 }

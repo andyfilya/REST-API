@@ -16,6 +16,10 @@ func InitActorService(repo repo.Actor) *ActorService {
 }
 
 func (as *ActorService) CreateActor(actor restapi.Actor) (int, error) {
+	err := checkEmptyCreate(actor) // check if the fields of actor is empty
+	if err != nil {
+		return -1, err
+	}
 	return as.repo.CreateActor(actor)
 }
 
@@ -23,8 +27,9 @@ func (as *ActorService) DeleteActor(actor restapi.Actor) error {
 	return as.repo.DeleteActor(actor)
 }
 
-func (as *ActorService) ChangeActor(actorId int, toChange string) error {
-	return as.repo.ChangeActor(actorId, toChange)
+func (as *ActorService) ChangeActor(oldActor restapi.Actor, newActor restapi.Actor) error {
+	oldActor, newActor = checkEmptyFields(oldActor, newActor) // check if the fields of new actor is empty
+	return as.repo.ChangeActor(oldActor, newActor)
 }
 
 func (as *ActorService) FindActorFilm(actor string) ([]restapi.Film, error) {

@@ -43,7 +43,13 @@ func (adb *ActorDataBase) DeleteActor(actor restapi.Actor) error {
 	return nil
 }
 
-func (adb *ActorDataBase) ChangeActor(actorId int, toChange string) error {
+func (adb *ActorDataBase) ChangeActor(oldActor restapi.Actor, newActor restapi.Actor) error {
+	query := fmt.Sprintf("UPDATE %s SET actor_name=$1, actor_surname=$2, actor_birth_date=$3 WHERE actor_name=$4 AND actor_surname=$5", actorTbl)
+	_, err := adb.db.Exec(query, newActor.FirstName, newActor.LastName, newActor.DateBirth, oldActor.FirstName, oldActor.LastName)
+	if err != nil {
+		logrus.Errorf("error while exec update table : [%v]", err)
+		return err
+	}
 	return nil
 }
 

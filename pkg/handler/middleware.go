@@ -10,7 +10,7 @@ const (
 	auth = "Authorization"
 )
 
-func (h *Handler) middlewareAuth(next http.HandlerFunc) http.HandlerFunc {
+func (hr *Handler) middlewareAuth(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		authToken := r.Header.Get(auth)
 		if authToken == "" {
@@ -23,11 +23,12 @@ func (h *Handler) middlewareAuth(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		userId, err := h.services.ParseUserToken(authTokenSplit[1])
+		userId, err := hr.services.ParseUserToken(authTokenSplit[1])
 		if err != nil {
 			newErrWrite(w, http.StatusUnauthorized, "bad token.")
 			return
 		}
+		hr.logger.Infof("user id in middleware : [%d]", userId)
 		ctx := context.WithValue(r.Context(), "userId", userId)
 		r.WithContext(ctx)
 

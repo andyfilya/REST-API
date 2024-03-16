@@ -2,20 +2,34 @@ package handler
 
 import (
 	"github.com/andyfilya/restapi/pkg/service"
+	"github.com/sirupsen/logrus"
 	"net/http"
+	"os"
 )
 
 type Handler struct {
 	services *service.Service
+	logger   *logrus.Logger
 }
 
 func InitNewHandler(services *service.Service) *Handler {
+	logger := &logrus.Logger{
+		Out:   os.Stderr,
+		Level: logrus.DebugLevel,
+		Formatter: &logrus.JSONFormatter{
+			TimestampFormat: "2006-01-02 15:04:05",
+			PrettyPrint:     true,
+		},
+	}
+
 	return &Handler{
 		services: services,
+		logger:   logger,
 	}
 }
 
 func (hr *Handler) StartRoute() http.Handler {
+	hr.logger.Infof("starting route")
 	mux := http.NewServeMux()
 	// REGISTER (BEFORE AUTH) //
 

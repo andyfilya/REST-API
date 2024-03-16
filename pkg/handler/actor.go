@@ -86,7 +86,7 @@ func (hr *Handler) updateActor(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&updateActor)
 	if err != nil {
-		logrus.Errorf("error while decode request body : [%v]", err)
+		hr.logger.Errorf("error while decode request body : [%v]", err)
 		newErrWrite(w, http.StatusBadRequest, "bad body of request.")
 		return
 	}
@@ -100,7 +100,7 @@ func (hr *Handler) updateActor(w http.ResponseWriter, r *http.Request) {
 
 	err = hr.services.ChangeActor(oldActor, newActor)
 	if err != nil {
-		logrus.Errorf("error while change actor in database : [%v]", err)
+		hr.logger.Errorf("error while change actor in database : [%v]", err)
 		newErrWrite(w, http.StatusBadRequest, "something went wrong...")
 		return
 	}

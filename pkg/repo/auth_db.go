@@ -41,10 +41,14 @@ func (auth *AuthDataBase) FindUser(username, password string) (restapi.User, err
 
 	query := fmt.Sprintf("SELECT * FROM %s WHERE username=$1", usrTbl)
 	row := auth.db.QueryRow(query, username)
-	err := row.Scan(&findUsr.Id, &findUsr.Username, &findUsr.Password, &timestamp)
+	err := row.Scan(&findUsr.Id, &findUsr.Username, &findUsr.Password, &timestamp, &findUsr.Role)
 	if err != nil {
 		logrus.Errorf("error while scan row from postgreswql : [%v]", err)
 		return findUsr, errors.New("can't find user with username: " + username)
+	}
+
+	if (restapi.User{}) == findUsr {
+		return findUsr, errors.New("no such user found in database")
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(findUsr.Password), []byte(password))

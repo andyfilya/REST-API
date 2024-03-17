@@ -30,7 +30,7 @@ func (auth *AuthService) NewUser(user restapi.User) (int, error) {
 
 	if !isValid(user.Password) {
 		logrus.Infof("not valid password for user: [%s]", user.Username)
-		return -1, errors.New("not valid password, make it right.")
+		return -1, errors.New("not valid password, make it right")
 	}
 
 	hashedPassword := hashPassword(user.Password)
@@ -41,7 +41,8 @@ func (auth *AuthService) NewUser(user restapi.User) (int, error) {
 
 type tokenClaims struct {
 	jwt.StandardClaims
-	UserId int `json:"user_id"`
+	UserId   int    `json:"user_id"`
+	UserRole string `json:"user_role"`
 }
 
 func (auth *AuthService) NewUserToken(username, password string) (string, error) {
@@ -57,6 +58,7 @@ func (auth *AuthService) NewUserToken(username, password string) (string, error)
 			IssuedAt:  time.Now().Unix(),
 		},
 		us.Id,
+		us.Role,
 	})
 
 	return token.SignedString([]byte(signKey))
@@ -65,7 +67,7 @@ func (auth *AuthService) NewUserToken(username, password string) (string, error)
 func (auth *AuthService) ParseUserToken(authToken string) (int, error) {
 	token, err := jwt.ParseWithClaims(authToken, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("bad auth token.")
+			return nil, errors.New("bad auth token")
 		}
 		return []byte(signKey), nil
 	})
@@ -78,4 +80,21 @@ func (auth *AuthService) ParseUserToken(authToken string) (int, error) {
 	}
 
 	return claims.UserId, nil
+}
+
+func (auth *AuthService) ParseAdminToken(authToken string) (string, error) {
+	token, err := jwt.ParseWithClaims(authToken, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("bad auth token")
+		}
+		return []byte(signKey), nil
+	})
+	if err != nil {
+		return "", err
+	}
+	claims, ok := token.Claims.(*tokenClaims)
+	if !ok {
+		return "", errors.New("not type of token claim like our service")
+	}
+	return claims.UserRole, nil
 }

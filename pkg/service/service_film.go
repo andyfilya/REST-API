@@ -16,7 +16,19 @@ func InitFilmService(repo repo.Film) Film {
 	}
 }
 
-func (fs *FilmService) CreateFilm(film restapi.Film) (int, error) {
+func (fs *FilmService) CreateFilmWithoutActor(film restapi.Film) (int, error) {
+	return fs.repo.CreateFilmWithoutActor(film)
+}
+
+func (fs *FilmService) AddActorToFilm(actorId int, filmId int) error {
+	return fs.repo.AddActorToFilm(actorId, filmId)
+}
+
+func (fs *FilmService) GetAllFilms() ([]restapi.Film, error) {
+	return fs.repo.GetAllFilms()
+}
+
+func (fs *FilmService) CreateFilm(actorId int, film restapi.Film) (int, error) {
 	if !titleFilmCheck(film.Title) {
 		return -1, errors.New("title of film is very big (max 150 chars) or empty")
 	}
@@ -24,7 +36,7 @@ func (fs *FilmService) CreateFilm(film restapi.Film) (int, error) {
 		return -1, errors.New("description of film is very big (max 1000 chars)")
 	}
 
-	return fs.repo.CreateFilm(film)
+	return fs.repo.CreateFilm(actorId, film)
 }
 
 func (fs *FilmService) DeleteFilm(film restapi.Film) error {
@@ -39,6 +51,9 @@ func (fs *FilmService) ChangeFilm(newFilm restapi.Film, oldFilm restapi.Film) er
 	return fs.repo.ChangeFilm(newFilm, oldFilm)
 }
 
+func (fs *FilmService) CreateFilmActors(actorIds []int, film restapi.Film) (int, error) {
+	return fs.repo.CreateFilmActors(actorIds, film)
+}
 func (fs *FilmService) ActorsFilm(filmId int) ([]restapi.Actor, error) {
 	return nil, nil
 }

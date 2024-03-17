@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"errors"
 	"fmt"
 	"github.com/andyfilya/restapi"
 	"github.com/jmoiron/sqlx"
@@ -34,13 +35,34 @@ func (adb *ActorDataBase) CreateActor(actor restapi.Actor) (int, error) {
 }
 
 func (adb *ActorDataBase) DeleteActor(actor restapi.Actor) error {
-	query := fmt.Sprintf("DELETE FROM %s WHERE actor_name=$1 AND actor_surname=$2", actorTbl)
-	_, err := adb.db.Exec(query, actor.FirstName, actor.LastName)
+	var actorId int
+	tx, err := adb.db.Begin()
+	if err != nil {
+		logrus.Errorf("error begin transaction : [%v]", err)
+		return errors.New("unknown error")
+	}
+	query := fmt.Sprintf("SELECT actor_id FROM %s WHERE actor_name=$1 AND actor_surname=$2", actorTbl)
+	row := tx.QueryRow(query, actor.FirstName, actor.LastName)
+	err = row.Scan(&actorId)
+
+	if err != nil {
+		logrus.Errorf("error in tx : [%v]", err)
+		return errors.New("unknown error")
+	}
+	query = fmt.Sprintf("DELETE FROM %s WHERE actor_id=$1", actorTbl)
+	_, err = tx.Exec(query, actorId)
 	if err != nil {
 		logrus.Errorf("error while exec actor table : [%v]", err)
 		return err
 	}
-	return nil
+	query = fmt.Sprintf("DELETE FROM %s WHERE a_id=$1", actorFilmTbl)
+	_, err = tx.Exec(query, actorId)
+	if err != nil {
+		logrus.Errorf("error while exec actor table : [%v]", err)
+		return err
+	}
+
+	return tx.Commit()
 }
 
 func (adb *ActorDataBase) ChangeActor(oldActor restapi.Actor, newActor restapi.Actor) error {

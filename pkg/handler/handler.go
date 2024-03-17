@@ -46,9 +46,13 @@ func (hr *Handler) StartRoute() http.Handler {
 
 	// ENDPOINTS WITH AUTH (AFTER AUTH ... WITH JWT TOKEN) FILMS //
 
-	mux.HandleFunc("/api/create/film", hr.middlewareAuth(hr.createFilm)) // create film
-	mux.HandleFunc("/api/delete/film", hr.middlewareAuth(hr.deleteFilm)) // delete film
-	mux.HandleFunc("/api/update/film", hr.middlewareAuth(hr.changeFilm)) // change film
+	mux.HandleFunc("/api/add/actor/film", hr.middlewareAuth(hr.addActorFilmToFilm))          // insert actor into film
+	mux.HandleFunc("/api/get/film", hr.middlewareAuth(hr.getAllFilmsWithActors))             // get all films
+	mux.HandleFunc("/api/create/film/without", hr.middlewareAuth(hr.createFilmWithoutActor)) // create film without actor
+	mux.HandleFunc("/api/create/film/one", hr.middlewareAuth(hr.createFilm))                 // create film with one actor_id
+	mux.HandleFunc("/api/create/film/many", hr.middlewareAuth(hr.createFilmActors))          // create film with many actor_ids
+	mux.HandleFunc("/api/delete/film", hr.middlewareAuth(hr.deleteFilm))                     // delete film
+	mux.HandleFunc("/api/update/film", hr.middlewareAuth(hr.changeFilm))                     // change film
 
 	return mux
 }

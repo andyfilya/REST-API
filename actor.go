@@ -1,10 +1,10 @@
 package restapi
 
 type Actor struct {
-	ActorId   int
-	FirstName string `json:"name" binding:"required"`
-	LastName  string `json:"surname" binding:"required"`
-	DateBirth string `json:"date_birth" binding:"required"'`
+	ActorId   int    `db:"actor_id"`
+	FirstName string `json:"name" db:"actor_name" binding:"required"`
+	LastName  string `json:"surname" db:"actor_surname" binding:"required"`
+	DateBirth string `json:"date_birth" db:"actor_birth_date" binding:"required"'`
 	Films     []Film
 }
 

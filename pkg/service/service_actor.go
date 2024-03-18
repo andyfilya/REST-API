@@ -32,6 +32,6 @@ func (as *ActorService) ChangeActor(oldActor restapi.Actor, newActor restapi.Act
 	return as.repo.ChangeActor(oldActor, newActor)
 }
 
-func (as *ActorService) FindActorFilm(actor string) ([]restapi.Film, error) {
-	return as.repo.FindActorFilm(actor)
+func (as *ActorService) FindActorFilm(actorFragments restapi.ActorFragment) ([]restapi.Film, error) {
+	return as.repo.FindActorFilm(actorFragments)
 }

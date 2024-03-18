@@ -15,3 +15,8 @@ type ToChange struct {
 	ToChangeSurname  string `json:"to_change_surname"`
 	ToChangeBirth    string `json:"to_change_birth"'`
 }
+
+type ActorFragment struct {
+	ActorNameFragment    string `json:"name"`
+	ActorSurnameFragment string `json:"surname"`
+}

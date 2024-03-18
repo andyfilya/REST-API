@@ -13,7 +13,27 @@ type NewActor struct {
 	DateBirth string `json:"date_birth"`
 }
 
+type toSendCreate struct {
+	ActorId int
+}
+
+// @Summary CreateActor
+// @Tags create
+// @Description Create actor
+// @ID create_actor
+// @Accept  json
+// @Produce  json
+// @Param input body restapi.Actor
+// @Success 200 {object} toSendCreate
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/create/actor [post]
 func (hr *Handler) createActor(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		newErrWrite(w, http.StatusBadRequest, "bad method")
+		return
+	}
 	newActor := NewActor{}
 
 	err := json.NewDecoder(r.Body).Decode(&newActor)
@@ -34,8 +54,8 @@ func (hr *Handler) createActor(w http.ResponseWriter, r *http.Request) {
 		newErrWrite(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	toSend := map[string]interface{}{
-		"actorId": actorId,
+	toSend := toSendCreate{
+		ActorId: actorId,
 	}
 
 	sendBytes, err := json.Marshal(toSend)
@@ -47,7 +67,27 @@ func (hr *Handler) createActor(w http.ResponseWriter, r *http.Request) {
 	w.Write(sendBytes)
 }
 
+type toSendDeleted struct {
+	Deleted string
+}
+
+// @Summary DeleteActor
+// @Tags delete
+// @Description Delete actor
+// @ID delete_actor
+// @Accept  json
+// @Produce  json
+// @Param input body restapi.newActor
+// @Success 200 {object} toSendDeleted
+// @Failure 400,404 {object} errorMessage
+// @Failure 500 {object} errorMessage
+// @Failure default {object} errorMessage
+// @Router /api/create/actor [post]
 func (hr *Handler) deleteActor(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		newErrWrite(w, http.StatusBadRequest, "bad method")
+		return
+	}
 	newActor := NewActor{}
 	err := json.NewDecoder(r.Body).Decode(&newActor)
 	if err != nil {
@@ -66,8 +106,8 @@ func (hr *Handler) deleteActor(w http.ResponseWriter, r *http.Request) {
 		newErrWrite(w, http.StatusBadRequest, "no such actors.")
 		return
 	}
-	toSend := map[string]interface{}{
-		"delete": toSendActor.FirstName + " " + toSendActor.LastName,
+	toSend := toSendDeleted{
+		Deleted: toSendActor.FirstName + " " + toSendActor.LastName,
 	}
 
 	sendBytes, err := json.Marshal(toSend)
@@ -79,7 +119,28 @@ func (hr *Handler) deleteActor(w http.ResponseWriter, r *http.Request) {
 	w.Write(sendBytes)
 }
 
+type toSendUpdate struct {
+	Old string
+	New string
+}
+
+// @Summary UpdateActor
+// @Tags update
+// @Description Update actor
+// @ID update_actor
+// @Accept  json
+// @Produce  json
+// @Param input body restapi.ToChange
+// @Success 200 {object} toSendUpdate
+// @Failure 400,404 {object} errorMessage
+// @Failure 500 {object} errorMessage
+// @Failure default {object} errorMessage
+// @Router /api/create/actor [put]
 func (hr *Handler) updateActor(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		newErrWrite(w, http.StatusBadRequest, "bad method")
+		return
+	}
 	updateActor := restapi.ToChange{}
 	oldActor := restapi.Actor{}
 	newActor := restapi.Actor{}
@@ -105,9 +166,9 @@ func (hr *Handler) updateActor(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	toSend := map[string]interface{}{
-		"old": oldActor.FirstName + " " + oldActor.LastName,
-		"new": newActor.FirstName + " " + newActor.LastName,
+	toSend := toSendUpdate{
+		Old: oldActor.FirstName + " " + oldActor.LastName,
+		New: newActor.FirstName + " " + newActor.LastName,
 	}
 
 	sendBytes, err := json.Marshal(toSend)
@@ -117,4 +178,40 @@ func (hr *Handler) updateActor(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write(sendBytes)
+}
+
+func (hr *Handler) findFilmByActorFragment(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		newErrWrite(w, http.StatusBadRequest, "bad method")
+		return
+	}
+
+	actorFragments := restapi.ActorFragment{}
+	err := json.NewDecoder(r.Body).Decode(&actorFragments)
+
+	if err != nil {
+		logrus.Errorf("error while decode request body")
+		newErrWrite(w, http.StatusBadRequest, "error while decode body | bad request")
+		return
+	}
+
+	films, err := hr.services.FindActorFilm(actorFragments)
+	if err != nil {
+		logrus.Errorf("error while find actor by fragments")
+		newErrWrite(w, http.StatusInternalServerError, "unknown error")
+		return
+	}
+	toSendMap := map[string]interface{}{
+		"actor_films": films,
+	}
+	toSend := ToSend{toSendMap}
+	toSendBytes, err := json.Marshal(toSend)
+	if err != nil {
+		logrus.Errorf("error while marshal to send map")
+		newErrWrite(w, http.StatusInternalServerError, "unknown error")
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(toSendBytes)
 }

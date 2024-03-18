@@ -75,6 +75,22 @@ func (adb *ActorDataBase) ChangeActor(oldActor restapi.Actor, newActor restapi.A
 	return nil
 }
 
-func (adb *ActorDataBase) FindActorFilm(actor string) ([]restapi.Film, error) {
-	return nil, nil
+func (adb *ActorDataBase) FindActorFilm(actorFragments restapi.ActorFragment) ([]restapi.Film, error) {
+	var toReturn []restapi.Film
+	tx, err := adb.db.Begin()
+	if err != nil {
+		tx.Rollback()
+		logrus.Errorf("error start transaction : [%v]", err)
+		return nil, errors.New("error start transaction")
+	}
+
+	query := fmt.Sprintf("SELECT film_id, film_title, film_date, film_description FROM films f INNER JOIN actors_films act_fil ON act_fil.f_id = f.film_id INNER JOIN actors  a ON act_fil.a_id = a.actor_id WHERE actor_name LIKE CONCAT($1::text,'%%') AND actor_surname LIKE CONCAT($2::text,'%%')")
+	err = adb.db.Select(&toReturn, query, actorFragments.ActorNameFragment, actorFragments.ActorSurnameFragment)
+	if err != nil {
+		tx.Rollback()
+		logrus.Errorf("error select rows from database : [%v]", err)
+		return nil, errors.New("bad crud operation")
+	}
+
+	return toReturn, tx.Commit()
 }

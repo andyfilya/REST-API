@@ -14,7 +14,7 @@ type Actor interface {
 	CreateActor(actor restapi.Actor) (int, error)
 	DeleteActor(actor restapi.Actor) error
 	ChangeActor(oldActor restapi.Actor, newActor restapi.Actor) error
-	FindActorFilm(actor string) ([]restapi.Film, error)
+	FindActorFilm(actorFragments restapi.ActorFragment) ([]restapi.Film, error)
 }
 
 type Film interface {

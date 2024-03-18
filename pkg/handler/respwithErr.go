@@ -23,3 +23,7 @@ func newErrWrite(w http.ResponseWriter, httpErr int, message string) {
 	w.WriteHeader(httpErr)
 	w.Write(bytesToSend)
 }
+
+type ToSend struct {
+	ToSendMap map[string]interface{}
+}

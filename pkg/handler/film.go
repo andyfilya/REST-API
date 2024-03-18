@@ -20,7 +20,23 @@ type ToCreateWithActors struct {
 	restapi.Film
 }
 
+// @Summary CreateFilmWithActors
+// @Tags create
+// @Description Create film with actors
+// @ID create_with
+// @Accept  json
+// @Produce  json
+// @Param input body ToCreateWithActors
+// @Success 200 {object} ToSend
+// @Failure 400,404 {object} errorMessage
+// @Failure 500 {object} errorMessage
+// @Failure default {object} errorMessage
+// @Router /api/create/film/many [post]
 func (hr *Handler) createFilmActors(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		newErrWrite(w, http.StatusBadRequest, "bad method")
+		return
+	}
 	newCreate := ToCreateWithActors{}
 
 	err := json.NewDecoder(r.Body).Decode(&newCreate)
@@ -39,9 +55,9 @@ func (hr *Handler) createFilmActors(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var toSend = map[string]interface{}{
+	var toSend = ToSend{map[string]interface{}{
 		"filmId": filmId,
-	}
+	}}
 
 	toSendBytes, err := json.Marshal(toSend)
 	if err != nil {
@@ -53,7 +69,23 @@ func (hr *Handler) createFilmActors(w http.ResponseWriter, r *http.Request) {
 	w.Write(toSendBytes)
 }
 
+// @Summary CreateFilm
+// @Tags create
+// @Description Create film without actors
+// @ID create_one
+// @Accept  json
+// @Produce  json
+// @Param input body restapi.Film
+// @Success 200 {object} ToSend
+// @Failure 400,404 {object} errorMessage
+// @Failure 500 {object} errorMessage
+// @Failure default {object} errorMessage
+// @Router /api/create/film/without[post]
 func (hr *Handler) createFilmWithoutActor(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		newErrWrite(w, http.StatusBadRequest, "bad method")
+		return
+	}
 	newFilm := restapi.Film{}
 	err := json.NewDecoder(r.Body).Decode(&newFilm)
 	if err != nil {
@@ -84,7 +116,24 @@ func (hr *Handler) createFilmWithoutActor(w http.ResponseWriter, r *http.Request
 	w.Write(toSendBytes)
 }
 
+// @Summary CreateFilmWithOne
+// @Tags create
+// @Description Create film with one actor
+// @ID create_one
+// @Accept  json
+// @Produce  json
+// @Param input body Create
+// @Success 200 {object} ToSend
+// @Failure 400,404 {object} errorMessage
+// @Failure 500 {object} errorMessage
+// @Failure default {object} errorMessage
+// @Router /api/create/film/one  [post]
 func (hr *Handler) createFilm(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		newErrWrite(w, http.StatusBadRequest, "bad method")
+		return
+	}
+
 	newCreate := Create{}
 
 	err := json.NewDecoder(r.Body).Decode(&newCreate)
@@ -103,9 +152,9 @@ func (hr *Handler) createFilm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var toSend = map[string]interface{}{
+	var toSend = ToSend{map[string]interface{}{
 		"filmId": filmId,
-	}
+	}}
 
 	toSendBytes, err := json.Marshal(toSend)
 	if err != nil {
@@ -123,7 +172,23 @@ type toDelete struct {
 	Title string `json:"title"'`
 }
 
+// @Summary DeleteFilm
+// @Tags delete
+// @Description Delete film
+// @ID delete_film
+// @Accept  json
+// @Produce  json
+// @Param input body toDelete
+// @Success 200 {object} ToSend
+// @Failure 400,404 {object} errorMessage
+// @Failure 500 {object} errorMessage
+// @Failure default {object} errorMessage
+// @Router /api/delete/film [delete]
 func (hr *Handler) deleteFilm(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
+		newErrWrite(w, http.StatusBadRequest, "bad method")
+		return
+	}
 	toDeleteFilm := restapi.Film{}
 	newDeleteFilm := toDelete{}
 	err := json.NewDecoder(r.Body).Decode(&newDeleteFilm)
@@ -143,12 +208,13 @@ func (hr *Handler) deleteFilm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var toSend = map[string]interface{}{
+	var toSend = ToSend{map[string]interface{}{
 		"deleted": toDeleteFilm.Title,
 		"success": true,
-	}
+	}}
 
 	toSendBytes, err := json.Marshal(toSend)
+
 	if err != nil {
 		hr.logger.Errorf("error while decode the message : [%v]", err)
 		newErrWrite(w, http.StatusInternalServerError, err.Error())
@@ -158,7 +224,23 @@ func (hr *Handler) deleteFilm(w http.ResponseWriter, r *http.Request) {
 	w.Write(toSendBytes)
 }
 
+// @Summary ChangeFilm
+// @Tags update
+// @Description Update film
+// @ID update
+// @Accept  json
+// @Produce  json
+// @Param input body ToCreateWithActors
+// @Success 200 {object} ToSend
+// @Failure 400,404 {object} errorMessage
+// @Failure 500 {object} errorMessage
+// @Failure default {object} errorMessage
+// @Router /api/create/film/many [post]
 func (hr *Handler) changeFilm(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPut {
+		newErrWrite(w, http.StatusBadRequest, "bad method")
+		return
+	}
 	updateFilm := restapi.ToChangeFilm{}
 	oldFilm := restapi.Film{}
 	newFilm := restapi.Film{}
@@ -187,11 +269,11 @@ func (hr *Handler) changeFilm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	toSend := map[string]interface{}{
+	toSend := ToSend{map[string]interface{}{
 		"old":     oldFilm,
 		"new":     newFilm,
 		"success": true,
-	}
+	}}
 
 	sendBytes, err := json.Marshal(toSend)
 	if err != nil {
@@ -206,7 +288,23 @@ type ToSort struct {
 	SortBy string `json:"sort_by"`
 }
 
+// @Summary GetAllFilms
+// @Tags get_all
+// @Description Get all films
+// @ID get
+// @Accept  json
+// @Produce  json
+// @Param input body ToSort
+// @Success 200 {object} ToSend
+// @Failure 400,404 {object} errorMessage
+// @Failure 500 {object} errorMessage
+// @Failure default {object} errorMessage
+// @Router /api/get/film [get]
 func (hr *Handler) getAllFilmsWithActors(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		newErrWrite(w, http.StatusBadRequest, "bad method")
+		return
+	}
 	var toSort ToSort
 	err := json.NewDecoder(r.Body).Decode(&toSort)
 	if err != nil {
@@ -249,11 +347,13 @@ func (hr *Handler) getAllFilmsWithActors(w http.ResponseWriter, r *http.Request)
 		})
 	}
 
-	toReturn := map[string]interface{}{}
+	mp := map[string]interface{}{}
 	for i, v := range resp {
 		name := "film#" + strconv.Itoa(i)
-		toReturn[name] = v
+		mp[name] = v
 	}
+
+	toReturn := ToSend{mp}
 	hr.logger.Infof("sort_by : %s, before : %v", toSort.SortBy, resp)
 	toSendBytes, err := json.Marshal(toReturn)
 	if err != nil {
@@ -270,7 +370,23 @@ type AddActorToFilm struct {
 	FilmId  int `json:"film_id"`
 }
 
+// @Summary AddActorToFilm
+// @Tags add_actor
+// @Description add actor to film
+// @ID update
+// @Accept  json
+// @Produce  json
+// @Param input body AddActorToFilm
+// @Success 200 {object} ToSend
+// @Failure 400,404 {object} errorMessage
+// @Failure 500 {object} errorMessage
+// @Failure default {object} errorMessage
+// @Router /api/create/film/many [post]
 func (hr *Handler) addActorFilmToFilm(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		newErrWrite(w, http.StatusBadRequest, "bad method")
+		return
+	}
 	add := AddActorToFilm{}
 
 	err := json.NewDecoder(r.Body).Decode(&add)
@@ -288,11 +404,11 @@ func (hr *Handler) addActorFilmToFilm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var toSend = map[string]interface{}{
+	var toSend = ToSend{map[string]interface{}{
 		"success":  "true",
 		"insetred": "add",
 		"into":     add.FilmId,
-	}
+	}}
 
 	toSendBytes, err := json.Marshal(toSend)
 	if err != nil {

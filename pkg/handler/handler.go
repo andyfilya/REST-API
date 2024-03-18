@@ -39,10 +39,11 @@ func (hr *Handler) StartRoute() http.Handler {
 
 	// ENDPOINTS WITH AUTH (AFTER AUTH ... WITH JWT TOKEN) ACTORS //
 
-	mux.HandleFunc("/auth/check", hr.middlewareAuth(hr.checkMiddlewareHealth)) // check health (middleware)
-	mux.HandleFunc("/api/create/actor", hr.middlewareAuth(hr.createActor))     // create actor
-	mux.HandleFunc("/api/delete/actor", hr.middlewareAuth(hr.deleteActor))     // delete actor
-	mux.HandleFunc("/api/update/actor", hr.middlewareAuth(hr.updateActor))     // update actor
+	mux.HandleFunc("/auth/check", hr.middlewareAuth(hr.checkMiddlewareHealth))                // check health (middleware)
+	mux.HandleFunc("/api/create/actor", hr.middlewareAuth(hr.createActor))                    // create actor
+	mux.HandleFunc("/api/delete/actor", hr.middlewareAuth(hr.deleteActor))                    // delete actor
+	mux.HandleFunc("/api/update/actor", hr.middlewareAuth(hr.updateActor))                    // update actor
+	mux.HandleFunc("/api/find/actorfragments", hr.middlewareAuth(hr.findFilmByActorFragment)) // find by fragments
 
 	// ENDPOINTS WITH AUTH (AFTER AUTH ... WITH JWT TOKEN) FILMS //
 

@@ -2,7 +2,7 @@ version: '3.1'
 services:
   restapi:
     build: ./
-    command: ./wait-for-postgres.sh restapi ./restapi
+    command: ./wait.sh restapi ./restapi
     ports:
       - 8081:8081
     depends_on:

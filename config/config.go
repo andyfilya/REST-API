@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	configYaml = "../../config/config.yaml"
+	configYaml = "config/config.yaml"
 )
 
 type ServerConfig struct {

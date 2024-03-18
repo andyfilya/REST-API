@@ -25,9 +25,9 @@ func InitAuthDataBase(db *sqlx.DB) *AuthDataBase {
 
 func (auth *AuthDataBase) NewUser(user restapi.User) (int, error) {
 	var lastInsertId int
-	query := fmt.Sprintf("INSERT INTO %s (create_time, username, password) VALUES (NOW(), $1, $2) RETURNING user_id", usrTbl)
-	logrus.Infof("%s", query, user.Username, user.Password)
-	row := auth.db.QueryRow(query, user.Username, user.Password)
+	query := fmt.Sprintf("INSERT INTO %s (create_time, username, password, user_role) VALUES (NOW(), $1, $2, $3) RETURNING user_id", usrTbl)
+	logrus.Infof("%s", query, user.Username, user.Password, user.Role)
+	row := auth.db.QueryRow(query, user.Username, user.Password, user.Role)
 	if err := row.Scan(&lastInsertId); err != nil {
 		logrus.Errorf("error while query row to postgres : [%v]", err)
 		return -1, err

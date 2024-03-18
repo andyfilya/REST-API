@@ -5,6 +5,8 @@ import (
 	"github.com/andyfilya/restapi/pkg/repo"
 )
 
+//go:generate mockgen -source=service.go -destination=mocks/mock.go
+
 type Authorization interface {
 	NewUser(user restapi.User) (int, error)
 	NewUserToken(username, password string) (string, error)

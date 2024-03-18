@@ -32,7 +32,9 @@ func (auth *AuthService) NewUser(user restapi.User) (int, error) {
 		logrus.Infof("not valid password for user: [%s]", user.Username)
 		return -1, errors.New("not valid password, make it right")
 	}
-
+	if user.Role != "user" {
+		return -1, errors.New("you are not admin")
+	}
 	hashedPassword := hashPassword(user.Password)
 	user.Password = string(hashedPassword)
 

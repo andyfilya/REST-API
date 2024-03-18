@@ -18,16 +18,17 @@ type toSendCreate struct {
 }
 
 // @Summary CreateActor
+// @Security ApiKeyAuth
 // @Tags create
 // @Description Create actor
 // @ID create_actor
 // @Accept  json
 // @Produce  json
-// @Param input body restapi.Actor
+// @Param input body restapi.Actor true "actor info"
 // @Success 200 {object} toSendCreate
-// @Failure 400,404 {object} errorResponse
-// @Failure 500 {object} errorResponse
-// @Failure default {object} errorResponse
+// @Failure 400,404 {object} errorMessage
+// @Failure 500 {object} errorMessage
+// @Failure default {object} errorMessage
 // @Router /api/create/actor [post]
 func (hr *Handler) createActor(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
@@ -72,19 +73,20 @@ type toSendDeleted struct {
 }
 
 // @Summary DeleteActor
+// @Security ApiKeyAuth
 // @Tags delete
 // @Description Delete actor
 // @ID delete_actor
 // @Accept  json
 // @Produce  json
-// @Param input body restapi.newActor
+// @Param input body NewActor true "actor info"
 // @Success 200 {object} toSendDeleted
 // @Failure 400,404 {object} errorMessage
 // @Failure 500 {object} errorMessage
 // @Failure default {object} errorMessage
-// @Router /api/create/actor [post]
+// @Router /api/create/actor [delete]
 func (hr *Handler) deleteActor(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
+	if r.Method != http.MethodDelete {
 		newErrWrite(w, http.StatusBadRequest, "bad method")
 		return
 	}
@@ -125,12 +127,13 @@ type toSendUpdate struct {
 }
 
 // @Summary UpdateActor
+// @Security ApiKeyAuth
 // @Tags update
 // @Description Update actor
 // @ID update_actor
 // @Accept  json
 // @Produce  json
-// @Param input body restapi.ToChange
+// @Param input body restapi.ToChange true "to_change_actor info"
 // @Success 200 {object} toSendUpdate
 // @Failure 400,404 {object} errorMessage
 // @Failure 500 {object} errorMessage
@@ -180,6 +183,19 @@ func (hr *Handler) updateActor(w http.ResponseWriter, r *http.Request) {
 	w.Write(sendBytes)
 }
 
+// @Summary FindFilmByActorFragment
+// @Security ApiKeyAuth
+// @Tags find
+// @Description Find films by actor fragments
+// @ID find_films
+// @Accept  json
+// @Produce  json
+// @Param input body restapi.ActorFragment true "actor fragment info"
+// @Success 200 {object} ToSend
+// @Failure 400,404 {object} errorMessage
+// @Failure 500 {object} errorMessage
+// @Failure default {object} errorMessage
+// @Router /api/find/actorfragments [post]
 func (hr *Handler) findFilmByActorFragment(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		newErrWrite(w, http.StatusBadRequest, "bad method")

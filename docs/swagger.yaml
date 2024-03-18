@@ -1,0 +1,615 @@
+basePath: /
+definitions:
+  handler.AddActorToFilm:
+    properties:
+      actor_id:
+        type: integer
+      film_id:
+        type: integer
+    type: object
+  handler.Create:
+    properties:
+      actorId:
+        type: integer
+      actors:
+        items:
+          $ref: '#/definitions/restapi.Actor'
+        type: array
+      date:
+        type: string
+      description:
+        type: string
+      film_id:
+        type: integer
+      rate:
+        type: string
+      title:
+        type: string
+    required:
+    - date
+    - description
+    - rate
+    - title
+    type: object
+  handler.NewActor:
+    properties:
+      date_birth:
+        type: string
+      name:
+        type: string
+      surname:
+        type: string
+    type: object
+  handler.ToCreateWithActors:
+    properties:
+      actorIds:
+        items:
+          type: integer
+        type: array
+      actors:
+        items:
+          $ref: '#/definitions/restapi.Actor'
+        type: array
+      date:
+        type: string
+      description:
+        type: string
+      film_id:
+        type: integer
+      rate:
+        type: string
+      title:
+        type: string
+    required:
+    - date
+    - description
+    - rate
+    - title
+    type: object
+  handler.ToSend:
+    properties:
+      toSendMap:
+        additionalProperties: true
+        type: object
+    type: object
+  handler.ToSort:
+    properties:
+      sort_by:
+        type: string
+    type: object
+  handler.errorMessage:
+    properties:
+      message:
+        type: string
+    type: object
+  handler.toDelete:
+    properties:
+      title:
+        type: string
+    type: object
+  handler.toSendCreate:
+    properties:
+      actorId:
+        type: integer
+    type: object
+  handler.toSendDeleted:
+    properties:
+      deleted:
+        type: string
+    type: object
+  handler.toSendRegister:
+    properties:
+      userId:
+        type: integer
+    type: object
+  handler.toSendUpdate:
+    properties:
+      new:
+        type: string
+      old:
+        type: string
+    type: object
+  restapi.Actor:
+    properties:
+      actorId:
+        type: integer
+      date_birth:
+        type: string
+      films:
+        items:
+          $ref: '#/definitions/restapi.Film'
+        type: array
+      name:
+        type: string
+      surname:
+        type: string
+    required:
+    - date_birth
+    - name
+    - surname
+    type: object
+  restapi.ActorFragment:
+    properties:
+      name:
+        type: string
+      surname:
+        type: string
+    type: object
+  restapi.Film:
+    properties:
+      actors:
+        items:
+          $ref: '#/definitions/restapi.Actor'
+        type: array
+      date:
+        type: string
+      description:
+        type: string
+      film_id:
+        type: integer
+      rate:
+        type: string
+      title:
+        type: string
+    required:
+    - date
+    - description
+    - rate
+    - title
+    type: object
+  restapi.ToChange:
+    properties:
+      actorId:
+        type: integer
+      date_birth:
+        type: string
+      films:
+        items:
+          $ref: '#/definitions/restapi.Film'
+        type: array
+      name:
+        type: string
+      surname:
+        type: string
+      to_change_birth:
+        type: string
+      to_change_name:
+        type: string
+      to_change_surname:
+        type: string
+    required:
+    - date_birth
+    - name
+    - surname
+    type: object
+  restapi.User:
+    properties:
+      password:
+        type: string
+      user_role:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:8081
+info:
+  contact: {}
+  description: API Server for VK.
+  title: Film App API
+  version: "1.0"
+paths:
+  /api/create/actor:
+    post:
+      consumes:
+      - application/json
+      description: Delete actor
+      operationId: delete_actor
+      parameters:
+      - description: actor info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handler.NewActor'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.toSendDeleted'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+      security:
+      - ApiKeyAuth: []
+      summary: DeleteActor
+      tags:
+      - delete
+    put:
+      consumes:
+      - application/json
+      description: Update actor
+      operationId: update_actor
+      parameters:
+      - description: to_change_actor info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/restapi.ToChange'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.toSendUpdate'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+      security:
+      - ApiKeyAuth: []
+      summary: UpdateActor
+      tags:
+      - update
+  /api/create/film/many:
+    post:
+      consumes:
+      - application/json
+      description: add actor to film
+      operationId: update
+      parameters:
+      - description: film information
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handler.AddActorToFilm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ToSend'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+      security:
+      - ApiKeyAuth: []
+      summary: AddActorToFilm
+      tags:
+      - add_actor
+  /api/create/film/one:
+    post:
+      consumes:
+      - application/json
+      description: Create film with one actor
+      operationId: create_one
+      parameters:
+      - description: film information
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handler.Create'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ToSend'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+      security:
+      - ApiKeyAuth: []
+      summary: CreateFilmWithOne
+      tags:
+      - create
+  /api/create/film/without:
+    post:
+      consumes:
+      - application/json
+      description: Create film without actors
+      operationId: create_only_one
+      parameters:
+      - description: film information
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/restapi.Film'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ToSend'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+      security:
+      - ApiKeyAuth: []
+      summary: CreateFilm
+      tags:
+      - create
+  /api/delete/film:
+    delete:
+      consumes:
+      - application/json
+      description: Delete film
+      operationId: delete_film
+      parameters:
+      - description: delete film information
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handler.toDelete'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ToSend'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+      security:
+      - ApiKeyAuth: []
+      summary: DeleteFilm
+      tags:
+      - delete
+  /api/find/actorfragments:
+    post:
+      consumes:
+      - application/json
+      description: Find films by actor fragments
+      operationId: find_films
+      parameters:
+      - description: actor fragment info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/restapi.ActorFragment'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ToSend'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+      security:
+      - ApiKeyAuth: []
+      summary: FindFilmByActorFragment
+      tags:
+      - find
+  /api/get/film:
+    post:
+      consumes:
+      - application/json
+      description: Get all films
+      operationId: get
+      parameters:
+      - description: to sort film information
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ToSort'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ToSend'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+      security:
+      - ApiKeyAuth: []
+      summary: GetAllFilms
+      tags:
+      - get_all
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: create new user
+      operationId: create-account
+      parameters:
+      - description: account info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/restapi.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.toSendRegister'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+      security:
+      - ApiKeyAuth: []
+      summary: RegisterNewUser
+      tags:
+      - auth
+  /auth/signin:
+    post:
+      consumes:
+      - application/json
+      description: login
+      operationId: login
+      parameters:
+      - description: credentials
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/restapi.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: token
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorMessage'
+      security:
+      - ApiKeyAuth: []
+      summary: SignIn
+      tags:
+      - auth
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

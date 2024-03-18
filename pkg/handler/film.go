@@ -21,12 +21,13 @@ type ToCreateWithActors struct {
 }
 
 // @Summary CreateFilmWithActors
+// @Security ApiKeyAuth
 // @Tags create
 // @Description Create film with actors
 // @ID create_with
 // @Accept  json
 // @Produce  json
-// @Param input body ToCreateWithActors
+// @Param input body ToCreateWithActors true "film information"
 // @Success 200 {object} ToSend
 // @Failure 400,404 {object} errorMessage
 // @Failure 500 {object} errorMessage
@@ -70,17 +71,18 @@ func (hr *Handler) createFilmActors(w http.ResponseWriter, r *http.Request) {
 }
 
 // @Summary CreateFilm
+// @Security ApiKeyAuth
 // @Tags create
 // @Description Create film without actors
-// @ID create_one
+// @ID create_only_one
 // @Accept  json
 // @Produce  json
-// @Param input body restapi.Film
+// @Param input body restapi.Film true "film information"
 // @Success 200 {object} ToSend
 // @Failure 400,404 {object} errorMessage
 // @Failure 500 {object} errorMessage
 // @Failure default {object} errorMessage
-// @Router /api/create/film/without[post]
+// @Router /api/create/film/without [post]
 func (hr *Handler) createFilmWithoutActor(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		newErrWrite(w, http.StatusBadRequest, "bad method")
@@ -117,12 +119,13 @@ func (hr *Handler) createFilmWithoutActor(w http.ResponseWriter, r *http.Request
 }
 
 // @Summary CreateFilmWithOne
+// @Security ApiKeyAuth
 // @Tags create
 // @Description Create film with one actor
 // @ID create_one
 // @Accept  json
 // @Produce  json
-// @Param input body Create
+// @Param input body Create true "film information"
 // @Success 200 {object} ToSend
 // @Failure 400,404 {object} errorMessage
 // @Failure 500 {object} errorMessage
@@ -173,12 +176,13 @@ type toDelete struct {
 }
 
 // @Summary DeleteFilm
+// @Security ApiKeyAuth
 // @Tags delete
 // @Description Delete film
 // @ID delete_film
 // @Accept  json
 // @Produce  json
-// @Param input body toDelete
+// @Param input body toDelete true "delete film information"
 // @Success 200 {object} ToSend
 // @Failure 400,404 {object} errorMessage
 // @Failure 500 {object} errorMessage
@@ -225,12 +229,13 @@ func (hr *Handler) deleteFilm(w http.ResponseWriter, r *http.Request) {
 }
 
 // @Summary ChangeFilm
+// @Security ApiKeyAuth
 // @Tags update
 // @Description Update film
 // @ID update
 // @Accept  json
 // @Produce  json
-// @Param input body ToCreateWithActors
+// @Param input body ToCreateWithActors true "film information"
 // @Success 200 {object} ToSend
 // @Failure 400,404 {object} errorMessage
 // @Failure 500 {object} errorMessage
@@ -289,19 +294,20 @@ type ToSort struct {
 }
 
 // @Summary GetAllFilms
+// @Security ApiKeyAuth
 // @Tags get_all
 // @Description Get all films
 // @ID get
 // @Accept  json
 // @Produce  json
-// @Param input body ToSort
+// @Param input body ToSort true "to sort film information"
 // @Success 200 {object} ToSend
 // @Failure 400,404 {object} errorMessage
 // @Failure 500 {object} errorMessage
 // @Failure default {object} errorMessage
-// @Router /api/get/film [get]
+// @Router /api/get/film [post]
 func (hr *Handler) getAllFilmsWithActors(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
+	if r.Method != http.MethodPost {
 		newErrWrite(w, http.StatusBadRequest, "bad method")
 		return
 	}
@@ -371,12 +377,13 @@ type AddActorToFilm struct {
 }
 
 // @Summary AddActorToFilm
+// @Security ApiKeyAuth
 // @Tags add_actor
 // @Description add actor to film
 // @ID update
 // @Accept  json
 // @Produce  json
-// @Param input body AddActorToFilm
+// @Param input body AddActorToFilm true "film information"
 // @Success 200 {object} ToSend
 // @Failure 400,404 {object} errorMessage
 // @Failure 500 {object} errorMessage

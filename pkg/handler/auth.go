@@ -11,6 +11,7 @@ type toSendRegister struct {
 }
 
 // @Summary RegisterNewUser
+// @Security ApiKeyAuth
 // @Tags auth
 // @Description create new user
 // @ID create-account
@@ -21,13 +22,14 @@ type toSendRegister struct {
 // @Failure 400,404 {object} errorMessage
 // @Failure 500 {object} errorMessage
 // @Failure default {object} errorMessage
-// @Router /api/auth/register [post]
+// @Router /auth/register [post]
 func (hr *Handler) registerNewUser(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		newErrWrite(w, http.StatusBadRequest, "bad method")
 		return
 	}
 	var newUser restapi.User
+	newUser.Role = "user"
 	err := json.NewDecoder(r.Body).Decode(&newUser)
 	if err != nil {
 		newErrWrite(w, http.StatusBadRequest, "bad request")
@@ -36,7 +38,7 @@ func (hr *Handler) registerNewUser(w http.ResponseWriter, r *http.Request) {
 
 	userId, err := hr.services.Authorization.NewUser(newUser)
 	if err != nil {
-		newErrWrite(w, http.StatusInternalServerError, err.Error())
+		newErrWrite(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -49,22 +51,23 @@ func (hr *Handler) registerNewUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "applicatopn/json")
+	w.Header().Set("Content-Type", "application/json")
 	w.Write(sendBytes)
 }
 
 // @Summary SignIn
+// @Security ApiKeyAuth
 // @Tags auth
 // @Description login
 // @ID login
 // @Accept  json
 // @Produce  json
-// @Param input body signInInput true "credentials"
+// @Param input body restapi.User true "credentials"
 // @Success 200 {string} string "token"
-// @Failure 400,404 {object} errorResponse
-// @Failure 500 {object} errorResponse
-// @Failure default {object} errorResponse
-// @Router /api/auth/signin [post]
+// @Failure 400,404 {object} errorMessage
+// @Failure 500 {object} errorMessage
+// @Failure default {object} errorMessage
+// @Router /auth/signin [post]
 func (hr *Handler) signinUser(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		newErrWrite(w, http.StatusBadRequest, "bad method")
